@@ -34,12 +34,24 @@
     <Compile Include="school_backend\settings.py" />
     <Compile Include="school_backend\urls.py" />
     <Compile Include="school_backend\wsgi.py" />
+    <Compile Include="user\admin.py" />
+    <Compile Include="user\apps.py" />
+    <Compile Include="user\migrations\__init__.py" />
+    <Compile Include="user\models.py" />
+    <Compile Include="user\tests.py" />
+    <Compile Include="user\views.py" />
+    <Compile Include="user\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="user\templates\user\index.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="school_backend\" />
+    <Folder Include="user\" />
+    <Folder Include="user\migrations\" />
+    <Folder Include="user\templates\" />
+    <Folder Include="user\templates\user\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Django.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
