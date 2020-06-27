@@ -34,11 +34,14 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "127.0.0.1:1234"]
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'user'
 ]
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'school_backend.middlewares.CORSMiddleware',
+    'school_backend.middlewares.AuthMiddleware'
 ]
 
 ROOT_URLCONF = 'school_backend.urls'
@@ -112,3 +115,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = posixpath.join(*(BASE_DIR.split(os.path.sep) + ['static']))
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '../../media')
