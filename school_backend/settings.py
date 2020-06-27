@@ -37,11 +37,12 @@ INSTALLED_APPS = [
     'user'
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'school_backend.middlewares.CORSMiddleware',
-    'school_backend.middlewares.AuthMiddleware'
+    'django.middleware.common.CommonMiddleware',
+    'middleware.CORSMiddleware',
+    'middleware.AuthMiddleware'
 ]
 
 ROOT_URLCONF = 'school_backend.urls'
@@ -78,6 +79,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {

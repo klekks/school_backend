@@ -3,7 +3,6 @@ from django.db import IntegrityError
 from bcrypt import hashpw, checkpw, gensalt
 from datetime import datetime, timedelta
 from random import randint
-from school_backend.utils import hash
 
 
 class User(models.Model):

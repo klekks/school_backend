@@ -1,3 +1,6 @@
+from random import randint
+
+
 def hash(length=16):
     s = ''
     alph = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
