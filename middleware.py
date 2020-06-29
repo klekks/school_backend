@@ -1,5 +1,6 @@
 from django.utils.deprecation import MiddlewareMixin
 from user.models import User
+from django.http.request import QueryDict
 
 
 class CORSMiddleware(MiddlewareMixin):
@@ -16,3 +17,9 @@ class AuthMiddleware(MiddlewareMixin):
         else:
             request.user = User(status=5, id=-1)
         return None
+
+
+class HttpMethodsMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        if request.method not in ["POST", "GET"]:
+            request.POST = QueryDict(request.read())
