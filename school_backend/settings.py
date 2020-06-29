@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'user',
-    'params'
+    'params',
+    'media'
 ]
 
 MIDDLEWARE = [

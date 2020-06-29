@@ -7,6 +7,7 @@ def hash(length=16):
     alph = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     for i in range(length):
         s += alph[randint(0, len(alph) - 1)]
+    return s
 
 
 def simple_response(code=200, data=False):

@@ -9,5 +9,5 @@ from media.views import upload_image
 urlpatterns = [
    url('core', include('params.urls')),
    url('user', include('user.urls')),
-   url('upload', upload_image),
+   url('media', include('media.urls')),
 ]

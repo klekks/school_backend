@@ -11,7 +11,7 @@ class User(models.Model):
     salt = models.BinaryField()
     email = models.EmailField(unique=True)
     status = models.PositiveSmallIntegerField()
-    skin = models.ImageField()
+    logotype = models.ImageField()
     birthday = models.DateField()
 
     def set_password(self, password):
