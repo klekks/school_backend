@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'user',
     'params',
-    'media'
+    'media',
+    'history'
 ]
 
 MIDDLEWARE = [
@@ -44,10 +45,13 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'middleware.CORSMiddleware',
-    'middleware.AuthMiddleware'
+    'middleware.AuthMiddleware',
+    'middleware.HttpMethodsMiddleware'
 ]
 
 ROOT_URLCONF = 'school_backend.urls'
+
+DEFAULT_FILE_STORAGE = 'django_hashedfilenamestorage.storage.HashedFilenameFileSystemStorage'
 
 TEMPLATES = [
     {

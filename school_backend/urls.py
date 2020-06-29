@@ -3,7 +3,6 @@ Definition of urls for school_backend.
 """
 
 from django.conf.urls import include, url
-from media.views import upload_image
 
 
 urlpatterns = [

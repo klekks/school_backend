@@ -21,6 +21,11 @@ def settings(request):
             return simple_response(422)
         except ObjectDoesNotExist:
             Settings(key=key, value=value, access=access).save()
+            request.in_history = True
+            request.history = {"action": "create",
+                               "section": "core",
+                               "object": "settings",
+                               "params": {key: value, "access": access}}
             return simple_response(201)
     elif request.method == "GET":
         try:
@@ -47,6 +52,11 @@ def settings(request):
         try:
             s = Settings.objects.get(key=key)
             s.change_value(value)
+            request.in_history = True
+            request.history = {"action": "update",
+                               "section": "core",
+                               "object": "settings",
+                               "params": {key: value}}
             return simple_response(200)
         except ObjectDoesNotExist:
             return simple_response(422)
@@ -56,6 +66,11 @@ def settings(request):
         try:
             key = data["key"].lower()
             Settings.objects.get(key=key).delete()
+            request.in_history = True
+            request.history = {"action": "delete",
+                               "section": "core",
+                               "object": "settings",
+                               "params": {"key": key}}
             return simple_response(200)
         except KeyError:
             return simple_response(400)
@@ -81,6 +96,11 @@ def storage(request):
             return simple_response(422)
         except ObjectDoesNotExist:
             Storage(key=key, value=value, access=access).save()
+            request.in_history = True
+            request.history = {"action" : "create",
+                               "section": "core",
+                               "object": "storage",
+                               "params": {key: value, "access": access}}
             return simple_response(201)
     elif request.method == "GET":
         try:
@@ -107,6 +127,11 @@ def storage(request):
         try:
             s = Storage.objects.get(key=key)
             s.change_value(value)
+            request.in_history = True
+            request.history = {"action": "update",
+                               "section": "core",
+                               "object": "storage",
+                               "params": {key: value, "access": s.access}}
             return simple_response(200)
         except ObjectDoesNotExist:
             return simple_response(422)
@@ -116,6 +141,11 @@ def storage(request):
         try:
             key = data["key"].lower()
             Storage.objects.get(key=key).delete()
+            request.in_history = True
+            request.history = {"action": "delete",
+                               "section": "core",
+                               "object": "storage",
+                               "params": {"key": key}}
             return simple_response(200)
         except KeyError:
             return simple_response(400)

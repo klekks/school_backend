@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from bcrypt import hashpw, checkpw, gensalt
 from datetime import datetime, timedelta
 from random import randint
+from utils import hash
 
 
 class User(models.Model):
@@ -38,11 +39,10 @@ class User(models.Model):
 
 
 class Temp_user(models.Model):
-    id = models.BigIntegerField(primary_key=True, unique=True)
     pin = models.BinaryField()
     status = models.PositiveSmallIntegerField()
     email = models.EmailField()
-    key = models.CharField(max_length=16)
+    key = models.CharField(max_length=16, default=hash(16))
     delete_time = models.DateTimeField(default=datetime.now() + timedelta(days=1))
 
     def set_pin(self):
@@ -70,3 +70,6 @@ class Temp_user(models.Model):
             return False, "Invalid Params"
         except IntegrityError:
             return False, "Already Exist"
+
+    def send_message(self):
+        print("НЕ РЕАЛИЗОВАННО")
