@@ -8,7 +8,6 @@ def upload_image(request, **kwargs):
     if request.method != "POST":
         return simple_response(405)
     try:
-        data = request.POST
         key = kwargs["key"]
         uploader = UploadUrl.objects.get(key=key, user=request.user)
         image = request.FILES["image"]
