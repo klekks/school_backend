@@ -34,7 +34,8 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "127.0.0.1:1234"]
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'user'
+    'user',
+    'params'
 ]
 
 MIDDLEWARE = [

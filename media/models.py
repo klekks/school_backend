@@ -19,3 +19,9 @@ class Skin(models.Model):
     image = models.ImageField(upload_to="/wallpapers")
     date = models.DateTimeField(default=datetime.now())
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+
+
+class File(models.Model):
+    file = models.FileField(upload_to="/files")
+    date = models.DateTimeField(default=datetime.now())
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
