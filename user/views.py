@@ -31,6 +31,7 @@ def login(request):
 
 
 def check(request):
+    print(1)
     if request.user.id == -1:
         return simple_response(401)
     else:
@@ -49,6 +50,22 @@ def user_main(request):
         return edit_user(request)
     elif request.method == "GET":
         return get_user(request)
+    elif request.method == "DELETE":
+        return delete_user(request)
+    return simple_response(405)
+
+
+def delete_user(request):
+    try:
+        data = request.POST
+        if request.user.status > 1:
+            return simple_response(403)
+        User.objects.get(id=data["id"]).delete()
+        return simple_response(200)
+    except KeyError:
+        return simple_response(400)
+    except ObjectDoesNotExist:
+        return simple_response(404)
 
 
 def add_user(request):
@@ -99,16 +116,25 @@ def edit_user(request):
 
 
 def get_user(request):
-    data = request.GET
-    if data.get("action", False) == "form":
-        pin = data["pin"].encode()
-        key = data["key"]
-        temp = Temp_user.objects.get(key=key)
-        if temp.check(pin):
-            request.session["temp_id"] = temp.id
-            return simple_response(200)
+    try:
+        data = request.GET
+        if data.get("action", False) == "form":
+            pin = data["pin"].encode()
+            key = data["key"]
+            temp = Temp_user.objects.get(key=key)
+            if temp.check(pin):
+                request.session["temp_id"] = temp.id
+                return simple_response(200)
+            else:
+                return simple_response(400)
         else:
-            return simple_response(400)
-    else:
-        user = User.objects.get(id=data["id"])
-        return simple_response(200, data=user.info(request.user.status))
+            user = User.objects.get(id=data["id"])
+            return simple_response(200, data=user.info(request.user.status))
+    except KeyError:
+        return simple_response(400)
+    except ObjectDoesNotExist:
+        return simple_response(404)
+    except IntegrityError:
+        return simple_response(422)
+    except ValidationError:
+        return simple_response(400)

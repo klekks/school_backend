@@ -21,7 +21,8 @@ class User(models.Model):
     def info(self, status):
         if self.status > 3:
             return {}
-        data = {"name": self.name, "surname": self.surname, "status": self.status, "skin": self.logotype.name, "online": self.online}
+        data = {"name": self.name, "surname": self.surname, "status": self.status,
+                "skin": self.logotype.name, "online": str(self.online).split(".")[0]}
         if status <= 1:
             data["refer"] = self.refer.name + " " + self.refer.surname
             data["refer_id"] = self.refer.id
@@ -60,7 +61,7 @@ class Temp_user(models.Model):
 
     def set_pin(self):
         pin = str(randint(1000, 9999))
-        self.pin = hashpw(pin, gensalt())
+        self.pin = hashpw(pin.encode(), gensalt())
         self.save()
         return pin
 
