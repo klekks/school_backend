@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class Event(models.Model):
-    user = models.ForeignKey(User, null=True, help_text="Object of action")
+    user = models.ForeignKey(User, null=True, help_text="Object of action", on_delete=models.DO_NOTHING)
     action = models.CharField(max_length=64, null=True)
     section = models.CharField(max_length=64, null=True)
     object = models.CharField(max_length=128, null=True)

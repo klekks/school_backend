@@ -2,6 +2,8 @@ from django.utils.deprecation import MiddlewareMixin
 from user.models import User
 from history.models import Event
 from django.http.request import QueryDict
+from django.core.exceptions import ObjectDoesNotExist
+from datetime import datetime
 
 
 class CORSMiddleware(MiddlewareMixin):
@@ -12,10 +14,15 @@ class CORSMiddleware(MiddlewareMixin):
 
 class AuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        if request.session.get("id", False):
-            user = User.objects.get(id=request.session["id"])
-            request.user = user
-        else:
+        try:
+            if request.session.get("id", False):
+                user = User.objects.get(id=request.session["id"])
+                request.user = user
+                user.online = datetime.now()
+                user.save()
+            else:
+                request.user = User(status=5, id=-1)
+        except ObjectDoesNotExist:
             request.user = User(status=5, id=-1)
         return None
 
