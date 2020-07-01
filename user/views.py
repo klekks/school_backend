@@ -1,8 +1,9 @@
-from utils import simple_response, hash
+from utils import simple_response, get_storage
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import IntegrityError
 from user.models import User, Temp_user
+from django.http import HttpResponseRedirect, HttpResponse
 
 
 def login(request):
@@ -47,6 +48,22 @@ def user_main(request):
         return edit_user(request)
     elif request.method == "GET":
         return get_user(request)
+    elif request.method == "DELETE":
+        return delete_user(request)
+    return simple_response(405)
+
+
+def delete_user(request):
+    try:
+        data = request.POST
+        if request.user.status > 1:
+            return simple_response(403)
+        User.objects.get(id=data["id"]).delete()
+        return simple_response(200)
+    except KeyError:
+        return simple_response(400)
+    except ObjectDoesNotExist:
+        return simple_response(404)
 
 
 def add_user(request):
@@ -69,12 +86,16 @@ def add_user(request):
 def edit_user(request):
     data = request.POST
     try:
-        if data["action"] == "confirm":
+        if data["action"] == "checkpin":
             key = request.session.get("key", False)
             if not key:
                 return simple_response(403)
             temp = Temp_user.objects.get(key=key)
-            temp.create(data)
+            if temp.check_pin(data["pin"]):
+                request.session["temp_user"] = temp
+                return simple_response(200)
+            else:
+                return simple_response(400)
         elif data["action"] == "update":
             request.user.update(data)
         elif data["action"] == "reset":
@@ -100,15 +121,15 @@ def edit_user(request):
 def get_user(request):
     try:
         data = request.GET
-        if data.get("action", False) == "form":
-            pin = data["pin"]
-            key = data["key"]
-            temp = Temp_user.objects.get(key=key)
-            if temp.check_pin(pin):
-                request.session["temp_id"] = temp.id
-                return simple_response(200)
-            else:
-                return simple_response(400)
+        if data.get("action", False) == "confirm":
+            try:
+                key = data["key"]
+                Temp_user.objects.get(key=key)
+                return HttpResponse(get_storage("pin_activation_page"))
+            except KeyError:
+                return HttpResponseRedirect("/not_found")
+            except ObjectDoesNotExist:
+                return HttpResponseRedirect("/not_found")
         else:
             user = User.objects.get(id=data["id"])
             return simple_response(200, data=user.info(request.user.status))

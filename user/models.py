@@ -21,7 +21,8 @@ class User(models.Model):
     def info(self, status):
         if self.status > 3:
             return {}
-        data = {"name": self.name, "surname": self.surname, "status": self.status, "skin": self.logotype.name, "online": str(self.online).split(".")[0]}
+        data = {"name": self.name, "surname": self.surname, "status": self.status,
+                "skin": self.logotype.name, "online": str(self.online).split(".")[0]}
         if status <= 1:
             try:
                 data["refer"] = self.refer.name + " " + self.refer.surname
