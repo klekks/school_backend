@@ -2,6 +2,17 @@ from random import randint
 from django.http import JsonResponse
 from params.models import Settings, Storage
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
+from school_backend.settings import EMAIL_HOST_USER
+
+
+def send_email(data):
+    try:
+        send_mail(data["title"], '', EMAIL_HOST_USER, [data["email"]],
+                  fail_silently=True, html_message=data["text"])
+        return True
+    except:
+        return False
 
 
 def hash(length=16):
@@ -24,6 +35,13 @@ def simple_response(code=200, data=False):
 def get_settings(key):
     try:
         return Settings.objects.get(key=key).value
+    except ObjectDoesNotExist:
+        return False
+
+
+def get_storage(key):
+    try:
+        return Storage.objects.get(key=key).value
     except ObjectDoesNotExist:
         return False
 

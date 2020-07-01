@@ -10,17 +10,15 @@ def login(request):
         return simple_response(405)
     if request.user.id == -1:
         data = request.POST
-        print(request.read())
         try:
             password = data["password"]
             email = data["login"]
             validate_email(email)
             user = User.objects.get(email=email)
-            if user.login(password.encode()):
+            if user.login(password):
                 request.session["id"] = user.id
                 return simple_response(200)
         except KeyError:
-            print(1)
             return simple_response(400)
         except ValidationError:
             return simple_response(400)
@@ -60,6 +58,7 @@ def add_user(request):
         temp = Temp_user(status=data["status"], email=data["email"], refer=request.user)
         pin = temp.set_pin()
         temp.save()
+        temp.send_message()
         return simple_response(201, data={"status": "ok", "pin": pin})
     except KeyError:
         return simple_response(400)
@@ -99,16 +98,25 @@ def edit_user(request):
 
 
 def get_user(request):
-    data = request.GET
-    if data.get("action", False) == "form":
-        pin = data["pin"].encode()
-        key = data["key"]
-        temp = Temp_user.objects.get(key=key)
-        if temp.check(pin):
-            request.session["temp_id"] = temp.id
-            return simple_response(200)
+    try:
+        data = request.GET
+        if data.get("action", False) == "form":
+            pin = data["pin"]
+            key = data["key"]
+            temp = Temp_user.objects.get(key=key)
+            if temp.check_pin(pin):
+                request.session["temp_id"] = temp.id
+                return simple_response(200)
+            else:
+                return simple_response(400)
         else:
-            return simple_response(400)
-    else:
-        user = User.objects.get(id=data["id"])
-        return simple_response(200, data=user.info(request.user.status))
+            user = User.objects.get(id=data["id"])
+            return simple_response(200, data=user.info(request.user.status))
+    except KeyError:
+        return simple_response(400)
+    except ObjectDoesNotExist:
+        return simple_response(404)
+    except IntegrityError:
+        return simple_response(422)
+    except ValidationError:
+        return simple_response(400)

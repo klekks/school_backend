@@ -1,9 +1,9 @@
 from django.db import models
-from django.db import IntegrityError
 from bcrypt import hashpw, checkpw, gensalt
 from datetime import datetime, timedelta, date
 from random import randint
-from utils import hash
+from utils import hash, send_email, get_settings, get_storage
+from school_backend.settings import DOMAIN
 
 
 class User(models.Model):
@@ -21,10 +21,13 @@ class User(models.Model):
     def info(self, status):
         if self.status > 3:
             return {}
-        data = {"name": self.name, "surname": self.surname, "status": self.status, "skin": self.logotype.name, "online": self.online}
+        data = {"name": self.name, "surname": self.surname, "status": self.status, "skin": self.logotype.name, "online": str(self.online).split(".")[0]}
         if status <= 1:
-            data["refer"] = self.refer.name + " " + self.refer.surname
-            data["refer_id"] = self.refer.id
+            try:
+                data["refer"] = self.refer.name + " " + self.refer.surname
+                data["refer_id"] = self.refer.id
+            except AttributeError:
+                pass
         if status <= 3:
             data["email"] = self.email
             data["birthday"] = self.birthday
@@ -32,11 +35,11 @@ class User(models.Model):
         return data
 
     def set_password(self, password):
-        self.salt = hashpw(password, gensalt())
+        self.salt = hashpw(password.encode(), gensalt())
         self.save()
 
     def login(self, password):
-        return checkpw(password, self.salt)
+        return checkpw(password.encode(), self.salt)
 
     def update(self, data):
         if data.get("name", False):
@@ -60,12 +63,12 @@ class Temp_user(models.Model):
 
     def set_pin(self):
         pin = str(randint(1000, 9999))
-        self.pin = hashpw(pin, gensalt())
+        self.pin = hashpw(pin.encode(), gensalt())
         self.save()
         return pin
 
     def check_pin(self, pin):
-        return checkpw(pin, self.pin)
+        return checkpw(pin.encode(), self.pin)
 
     def create(self, params):
         user = User()
@@ -80,7 +83,15 @@ class Temp_user(models.Model):
         self.delete()
 
     def send_message(self):
-        print("НЕ РЕАЛИЗОВАННО")
+        t = get_storage("confirm_email_template")
+        t = t.replace("{{register.contactmail}}", get_settings("contact_email"))
+        t = t.replace("{{register.contactphone}}", get_settings("contact_phone"))
+        t = t.replace("{{register.url}}", DOMAIN + "/user" + "?key=" + self.key + "&action=form")
+        send_email({
+            "title": "Подтверждение регистрации",
+            "email": self.email,
+            "text": t
+        })
 
 
 class user_updater(models.Model):
