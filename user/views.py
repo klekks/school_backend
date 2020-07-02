@@ -98,6 +98,10 @@ def edit_user(request):
                 return simple_response(400)
         elif data["action"] == "update":
             request.user.update(data)
+        elif data["action"] == "confirm":
+            user = request.session["temp_user"]
+            user.create(data)
+            return simple_response(200)
         elif data["action"] == "reset":
             pass
         elif data["action"] == "change":
