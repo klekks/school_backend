@@ -1,2 +1,3 @@
+django-after-response
 bcrypt
 django >=1.9, <2

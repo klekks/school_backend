@@ -3,5 +3,5 @@ from params.views import settings, storage
 
 urlpatterns = [
     url("settings", settings),
-    url("storage", storage)
+    url("storage", storage),
 ]

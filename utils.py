@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from params.models import Settings, Storage
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
+from smtplib import SMTPException
 from school_backend.settings import EMAIL_HOST_USER
 
 

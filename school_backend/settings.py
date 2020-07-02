@@ -16,6 +16,8 @@ import posixpath
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+PROFILE_LOG_BASE = BASE_DIR
+
 DOMAIN = "http://127.0.0.1"
 
 
@@ -39,7 +41,9 @@ INSTALLED_APPS = [
     'user',
     'params',
     'media',
-    'history'
+    'history',
+    'after_response',
+    'silk'
 ]
 
 MIDDLEWARE = [
@@ -48,7 +52,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'middleware.CORSMiddleware',
     'middleware.AuthMiddleware',
-    'middleware.HttpMethodsMiddleware'
+    'middleware.HttpMethodsMiddleware',
+    'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'school_backend.urls'
@@ -138,3 +143,5 @@ EMAIL_HOST_USER = 'no-reply@sua.su'
 EMAIL_HOST_PASSWORD = 'Boy222'
 SERVER_EMAIL = "no-reply@sua.su"
 DEFAULT_FROM_EMAIL = "no-reply@sua.su"
+
+AFTER_RESPONSE_RUN_ASYNC = True

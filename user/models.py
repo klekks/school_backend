@@ -2,8 +2,9 @@ from django.db import models
 from bcrypt import hashpw, checkpw, gensalt
 from datetime import datetime, timedelta, date
 from random import randint
-from utils import hash, send_email, get_settings, get_storage
+from utils import hash, send_email, get_settings, get_storage, SMTPException
 from school_backend.settings import DOMAIN
+import after_response
 
 
 class User(models.Model):
@@ -65,7 +66,6 @@ class Temp_user(models.Model):
     def set_pin(self):
         pin = str(randint(1000, 9999))
         self.pin = hashpw(pin.encode(), gensalt())
-        self.save()
         return pin
 
     def check_pin(self, pin):
@@ -87,12 +87,21 @@ class Temp_user(models.Model):
         t = get_storage("confirm_email_template")
         t = t.replace("{{register.contactmail}}", get_settings("contact_email"))
         t = t.replace("{{register.contactphone}}", get_settings("contact_phone"))
-        t = t.replace("{{register.url}}", DOMAIN + "/user" + "?key=" + self.key + "&action=form")
-        send_email({
+        t = t.replace("{{register.url}}", DOMAIN + "/user" + "?key=" + self.key + "&action=confirm")
+        messager.after_response({
             "title": "Подтверждение регистрации",
             "email": self.email,
             "text": t
         })
+
+
+@after_response.enable
+def messager(data):
+    try:
+        r = send_email(data)
+    except SMTPException:
+        print("err", r)
+    print('ok')
 
 
 class user_updater(models.Model):

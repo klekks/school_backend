@@ -71,7 +71,6 @@ def add_user(request):
         if request.user.status > 1:
             return simple_response(403)
         data = request.POST
-        validate_email(data["email"])
         temp = Temp_user(status=data["status"], email=data["email"], refer=request.user)
         pin = temp.set_pin()
         temp.save()
@@ -79,7 +78,7 @@ def add_user(request):
         return simple_response(201, data={"status": "ok", "pin": pin})
     except KeyError:
         return simple_response(400)
-    except ValidationError:
+    except IntegrityError:
         return simple_response(400)
 
 
@@ -96,6 +95,8 @@ def edit_user(request):
                 return simple_response(200)
             else:
                 return simple_response(400)
+        elif data["action"] == "confirm":
+            pass
         elif data["action"] == "update":
             request.user.update(data)
         elif data["action"] == "reset":

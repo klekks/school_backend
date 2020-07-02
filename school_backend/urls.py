@@ -9,4 +9,5 @@ urlpatterns = [
    url('core', include('params.urls')),
    url('user', include('user.urls')),
    url('media', include('media.urls')),
+   url('silk/', include('silk.urls', namespace='silk'))
 ]
